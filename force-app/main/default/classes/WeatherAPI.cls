@@ -29,7 +29,7 @@ public with sharing class WeatherAPI {
             else {
                 System.debug('Oops! I guess there isn&#39;t any weather here');
                 con.Department = 'mainResults';
-                updatedContacts.add(c);
+                updatedContacts.add(con);
             }
         update updatedContacts;
         }
