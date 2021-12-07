@@ -1,9 +1,10 @@
 public with sharing class WeatherAPI {
     @future (callout=true)
-    public void CurrentWeather(String contact) {
+    public static void CurrentWeather(String contact) {
         List<Contact> updatedContacts = new List<Contact>();
         List<Contact> con = [select id, MailingPostalCode, Department from Contact where id =:contact];
-            String zip = con.MailingPostalCode;
+        for (Contact c : con) {
+            String zip = c.MailingPostalCode;
             String apiKey = 'f824517a88ee092aaea1fb9c3a3d0a19';
             String requestEndPoint = 'https://api.openweathermap.org/data/2.5/weather?q=';
             requestEndPoint += zip;
@@ -16,21 +17,22 @@ public with sharing class WeatherAPI {
             HttpResponse response = http.send(request);
 
             if (response.getStatusCode() == 200) {
-                Map<String, Object> results =(Map<String, Object>)JSON.deserializeUntyped(response.getBody());
+                Map<String, Object> results = (Map<String, Object>)JSON.deserializeUntyped(response.getBody());
                 System.debug(results);
-                String mainResults = String.valueOf(results.get('main'));
+                Map<String, Object> mainResults = (Map<String, Object>)(results.get('main'));
                 System.debug(mainResults);
                 String temp = String.valueOf(mainResults.get('temp'));
                 System.debug(temp);
-                con.Department = temp;
-                updatedContacts.add(con);
+                c.Department = temp;
+                updatedContacts.add(c);
             }
 
             else {
                 System.debug('Oops! I guess there isn&#39;t any weather here');
-                con.Department = 'mainResults';
-                updatedContacts.add(con);
+                c.Department = 'mainResults';
+                updatedContacts.add(c);
             }
         update updatedContacts;
         }
+    }
 }
