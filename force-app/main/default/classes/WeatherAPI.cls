@@ -1,4 +1,4 @@
-public with sharing class WeatherAPI {
+public class WeatherAPI {
     @future (callout=true)
     public static void CurrentWeather(String contact) {
         List<Contact> updatedContacts = new List<Contact>();
